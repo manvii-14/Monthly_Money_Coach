@@ -3,446 +3,95 @@
   <head>
     <meta charset="utf-8">
     <title>Monthly Money Coach</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-      :root {
-        --bg:        #0a0c10;
-        --surface:   #111318;
-        --border:    #1e2230;
-        --accent:    #00e5a0;
-        --accent-dim:#00b87d;
-        --warn:      #ff6b35;
-        --text:      #c8d0e0;
-        --muted:     #4a5270;
-        --console-bg:#080a0e;
-        --console-fg:#00e5a0;
-        --font-ui:   'Syne', sans-serif;
-        --font-mono: 'Space Mono', monospace;
+      body { 
+        font-family: Arial, sans-serif; 
+        background-color: #f4f4f9; 
+        margin: 0; 
+        padding: 20px; 
+        text-align: center; 
       }
-
-      html, body {
-        height: 100%;
-        background: var(--bg);
-        color: var(--text);
-        font-family: var(--font-ui);
-        overflow-x: hidden;
+      .header { 
+        background: white; 
+        max-width: 900px; 
+        margin: 0 auto 20px; 
+        padding: 20px; 
+        border-radius: 8px; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
       }
-
-      /* ── Animated grid background ── */
-      body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background-image:
-          linear-gradient(var(--border) 1px, transparent 1px),
-          linear-gradient(90deg, var(--border) 1px, transparent 1px);
-        background-size: 40px 40px;
-        opacity: 0.35;
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      .page {
-        position: relative;
-        z-index: 1;
-        max-width: 860px;
-        margin: 0 auto;
-        padding: 36px 20px 48px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      /* ── Header ── */
-      .header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 16px;
-        animation: fadeDown 0.6s ease both;
-      }
-
-      .brand {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .brand-eyebrow {
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--accent);
-        opacity: 0.8;
-      }
-
-      .brand-title {
-        font-size: 28px;
-        font-weight: 800;
-        line-height: 1.1;
-        color: #fff;
-        letter-spacing: -0.02em;
-      }
-
-      .brand-title span {
-        color: var(--accent);
-      }
-
-      .status-pill {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        background: rgba(0,229,160,0.08);
-        border: 1px solid rgba(0,229,160,0.2);
-        border-radius: 100px;
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--accent);
-        letter-spacing: 0.05em;
-        white-space: nowrap;
-        margin-top: 6px;
-      }
-
-      .status-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--accent);
-        animation: pulse 2s ease-in-out infinite;
-      }
-
-      /* ── Command reference card ── */
-      .cmd-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 20px 24px;
-        animation: fadeDown 0.6s 0.1s ease both;
-      }
-
-      .cmd-card-header {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-bottom: 16px;
-      }
-
-      .cmd-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 10px;
-      }
-
-      .cmd-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(255,255,255,0.025);
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 10px 14px;
-        transition: border-color 0.2s, background 0.2s;
-      }
-
-      .cmd-item:hover {
-        border-color: rgba(0,229,160,0.3);
-        background: rgba(0,229,160,0.04);
-      }
-
-      .cmd-key {
-        width: 28px;
-        height: 28px;
-        background: var(--accent);
-        color: #000;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-mono);
-        font-size: 13px;
-        font-weight: 700;
-        flex-shrink: 0;
-      }
-
-      .cmd-label {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-      }
-
-      .cmd-name {
-        font-size: 13px;
-        font-weight: 700;
-        color: #e0e8f0;
-      }
-
-      .cmd-desc {
-        font-size: 11px;
-        color: var(--muted);
-      }
-
-      /* ── Category pills row ── */
-      .categories {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        animation: fadeDown 0.6s 0.15s ease both;
-      }
-
-      .cat-label {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-right: 4px;
-      }
-
-      .cat-pill {
-        font-size: 11px;
-        font-weight: 600;
-        padding: 4px 11px;
-        border-radius: 100px;
-        border: 1px solid;
-        letter-spacing: 0.04em;
-      }
-
-      .cat-pill.food         { color: #ffd166; border-color: rgba(255,209,102,0.3); background: rgba(255,209,102,0.06); }
-      .cat-pill.transport    { color: #06d6f0; border-color: rgba(6,214,240,0.3);   background: rgba(6,214,240,0.06);   }
-      .cat-pill.bills        { color: #ff6b6b; border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.06); }
-      .cat-pill.entertainment{ color: #c77dff; border-color: rgba(199,125,255,0.3); background: rgba(199,125,255,0.06); }
-      .cat-pill.other        { color: var(--text); border-color: var(--border);      background: rgba(255,255,255,0.04); }
-
-      /* ── Console wrapper ── */
-      .console-wrapper {
-        position: relative;
-        animation: fadeUp 0.6s 0.2s ease both;
-      }
-
-      .console-topbar {
-        background: #13161e;
-        border: 1px solid var(--border);
-        border-bottom: none;
-        border-radius: 12px 12px 0 0;
-        padding: 10px 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .traffic-lights {
-        display: flex;
-        gap: 6px;
-      }
-
-      .tl {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-      }
-      .tl.red    { background: #ff5f57; }
-      .tl.yellow { background: #febc2e; }
-      .tl.green  { background: #28c840; }
-
-      .console-title {
-        font-family: var(--font-mono);
-        font-size: 12px;
-        color: var(--muted);
-        flex: 1;
-        text-align: center;
-        letter-spacing: 0.05em;
-      }
-
-      .console-badge {
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--accent-dim);
-        background: rgba(0,229,160,0.08);
-        border: 1px solid rgba(0,229,160,0.15);
+      h1 { color: #2c3e50; margin-top: 0; }
+      .instructions { 
+        background: #eef7fa; 
+        border-left: 5px solid #3498db; 
+        padding: 15px; 
+        text-align: left; 
+        margin-top: 15px; 
+        font-size: 16px; 
         border-radius: 4px;
-        padding: 2px 8px;
       }
-
-      #output {
-        display: block;
-        width: 100%;
-        height: 420px;
-        background: var(--console-bg);
-        color: var(--console-fg);
-        font-family: var(--font-mono);
-        font-size: 13.5px;
-        line-height: 1.65;
-        padding: 20px 22px;
-        border: 1px solid var(--border);
-        border-top: none;
-        border-radius: 0 0 12px 12px;
-        resize: vertical;
-        outline: none;
-        letter-spacing: 0.01em;
-        box-shadow:
-          inset 0 0 60px rgba(0,229,160,0.03),
-          0 20px 60px rgba(0,0,0,0.5);
+      .menu-guide { margin-top: 10px; }
+      .menu-guide ul { list-style-type: none; padding-left: 0; }
+      .menu-guide li { margin-bottom: 8px; font-size: 15px;}
+      .number-badge { 
+        background: #2c3e50; 
+        color: white; 
+        padding: 3px 10px; 
+        border-radius: 4px; 
+        margin-right: 10px; 
+        font-weight: bold;
       }
-
-      #output:focus {
-        border-color: rgba(0,229,160,0.25);
-        box-shadow:
-          inset 0 0 60px rgba(0,229,160,0.04),
-          0 20px 60px rgba(0,0,0,0.5),
-          0 0 0 2px rgba(0,229,160,0.08);
+      /* This is what makes the console HUGE */
+      #output { 
+        width: 100%; 
+        max-width: 900px; 
+        height: 500px; 
+        background-color: #1e1e1e; 
+        color: #00ff00; 
+        font-family: 'Lucida Console', Monaco, monospace; 
+        font-size: 15px; 
+        padding: 20px; 
+        border-radius: 8px; 
+        border: none; 
+        box-sizing: border-box; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       }
-
-      /* Scrollbar */
-      #output::-webkit-scrollbar       { width: 6px; }
-      #output::-webkit-scrollbar-track { background: transparent; }
-      #output::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-      #output::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
-      /* ── Footer ── */
-      .footer {
-        text-align: center;
-        font-size: 11px;
-        color: var(--muted);
-        letter-spacing: 0.05em;
-        animation: fadeDown 0.6s 0.3s ease both;
+      canvas.emscripten, #status, #spinner, #controls, #progress, #emscripten_logo { 
+        display: none !important; 
       }
-
-      .footer a {
-        color: var(--accent-dim);
-        text-decoration: none;
-      }
-
-      /* ── Keyframes ── */
-      @keyframes fadeDown {
-        from { opacity: 0; transform: translateY(-12px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-
-      @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(16px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-
-      @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50%       { opacity: 0.5; transform: scale(0.85); }
-      }
-
-      /* ── Hide Emscripten defaults ── */
-      canvas.emscripten, #status, #spinner,
-      #controls, #progress, #emscripten_logo { display: none !important; }
     </style>
   </head>
   <body>
-    <div class="page">
-
-      <!-- Header -->
-      <div class="header">
-        <div class="brand">
-          <span class="brand-eyebrow">C++ · WebAssembly · OOP</span>
-          <h1 class="brand-title">Monthly<br><span>Money Coach</span></h1>
-        </div>
-        <div class="status-pill">
-          <span class="status-dot"></span>
-          WASM Running
-        </div>
-      </div>
-
-      <!-- Command reference -->
-      <div class="cmd-card">
-        <div class="cmd-card-header">Command Reference</div>
-        <div class="cmd-grid">
-          <div class="cmd-item">
-            <div class="cmd-key">1</div>
-            <div class="cmd-label">
-              <span class="cmd-name">Add Expense</span>
-              <span class="cmd-desc">Log a new transaction</span>
-            </div>
-          </div>
-          <div class="cmd-item">
-            <div class="cmd-key">2</div>
-            <div class="cmd-label">
-              <span class="cmd-name">View All</span>
-              <span class="cmd-desc">List every expense</span>
-            </div>
-          </div>
-          <div class="cmd-item">
-            <div class="cmd-key">3</div>
-            <div class="cmd-label">
-              <span class="cmd-name">Search</span>
-              <span class="cmd-desc">Filter by date or category</span>
-            </div>
-          </div>
-          <div class="cmd-item">
-            <div class="cmd-key">4</div>
-            <div class="cmd-label">
-              <span class="cmd-name">Reports</span>
-              <span class="cmd-desc">Totals & budget warning</span>
-            </div>
-          </div>
-          <div class="cmd-item">
-            <div class="cmd-key">5</div>
-            <div class="cmd-label">
-              <span class="cmd-name">Exit</span>
-              <span class="cmd-desc">Stop the program loop</span>
-            </div>
-          </div>
+    
+    <div class="header">
+      <h1>💸 Monthly Money Coach</h1>
+      <div class="instructions">
+        <p style="margin-top:0;"><strong>How to use:</strong> When prompted for "Input", use the guide below.</p>
+        <div class="menu-guide">
+          <ul>
+            <li><span class="number-badge">1</span> <strong>Add Expense</strong> (Allowed Categories: Food, Transport, Bills, Entertainment, Other)</li>
+            <li><span class="number-badge">2</span> <strong>View All</strong> (Displays all saved expenses)</li>
+            <li><span class="number-badge">3</span> <strong>Search</strong> (Find an expense by Date or Category)</li>
+            <li><span class="number-badge">4</span> <strong>Reports</strong> (View Monthly Total, Budget Warning, and Category Breakdown)</li>
+            <li><span class="number-badge">5</span> <strong>Exit</strong> (Stops the program loop)</li>
+          </ul>
         </div>
       </div>
-
-      <!-- Category pills -->
-      <div class="categories">
-        <span class="cat-label">Categories:</span>
-        <span class="cat-pill food">Food</span>
-        <span class="cat-pill transport">Transport</span>
-        <span class="cat-pill bills">Bills</span>
-        <span class="cat-pill entertainment">Entertainment</span>
-        <span class="cat-pill other">Other</span>
-      </div>
-
-      <!-- Console -->
-      <div class="console-wrapper">
-        <div class="console-topbar">
-          <div class="traffic-lights">
-            <span class="tl red"></span>
-            <span class="tl yellow"></span>
-            <span class="tl green"></span>
-          </div>
-          <span class="console-title">monthly-money-coach — stdin/stdout</span>
-          <span class="console-badge">WASM</span>
-        </div>
-        <textarea id="output" readonly></textarea>
-      </div>
-
-      <!-- Footer -->
-      <p class="footer">Built with C++ · Compiled via Emscripten · Hosted on GitHub Pages</p>
-
     </div>
 
+    <textarea id="output" readonly></textarea>
     <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
 
     <script type='text/javascript'>
       var Module = {
         print: (function() {
           var element = document.getElementById('output');
-          if (element) element.value = '';
+          if (element) element.value = ''; 
           return function(text) {
             if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
             console.log(text);
             if (element) {
               element.value += text + "\n";
-              element.scrollTop = element.scrollHeight;
+              element.scrollTop = element.scrollHeight; 
             }
           };
         })(),
